@@ -13,5 +13,4 @@ const bookSchema = new mongoose.Schema({
   barcode: { type: String, required: true, unique: true },
 });
 
-
 module.exports = mongoose.model('Book', bookSchema);

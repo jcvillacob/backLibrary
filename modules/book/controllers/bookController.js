@@ -8,24 +8,24 @@ exports.getAllBooks = (req, res) => {
 };
 
 exports.getBookById = (req, res) => {
-  Book.findById(req.params.id, (err, books) => {
+  Book.findById(req.params.id, (err, book) => {
     if (err) res.status(500).send(err);
-    res.status(200).json(books);
+    res.status(200).json(book);
   });
 };
 
 exports.createBook = (req, res) => {
   const newBook = new Book(req.body);
-  newBook.save((err, books) => {
+  newBook.save((err, book) => {
     if (err) res.status(500).send(err);
-    res.status(201).json(books);
+    res.status(201).json(book);
   });
 };
 
 exports.updateBook = (req, res) => {
-  Book.findByIdAndUpdate(req.params.id, req.body, (err, books) => {
+  Book.findByIdAndUpdate(req.params.id, req.body, (err, book) => {
     if (err) res.status(500).send(err);
-    res.status(200).json(books);
+    res.status(200).json(book);
   });
 };
 
