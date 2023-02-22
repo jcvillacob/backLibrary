@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
   publisher: { type: String, required: true },
   publicationYear: { type: Number, required: true },
   ISBN: { type: String, required: true },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Categ', required: true },
   editorial: { type: mongoose.Schema.Types.ObjectId, ref: 'Editorial', required: true },
   available: { type: Boolean, default: true },
   loan: { type: mongoose.Schema.Types.ObjectId, ref: 'Loan', default: null },

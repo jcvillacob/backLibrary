@@ -1,14 +1,16 @@
 const Loan = require('../models/loanModel');
 
 exports.getAllLoans = (req, res) => {
-    Loan.find({}, (err, loans) => {
+    Loan.find({})
+    .populate({path: 'user', select: 'name',}).populate({path: 'book', select: 'title',}).exec((err, loans) => {
     if (err) res.status(500).send(err);
     res.status(200).json(loans);
   });
 };
 
 exports.getLoanById = (req, res) => {
-  Loan.findById(req.params.id, (err, loan) => {
+  Loan.findById(req.params.id)
+  .populate({path: 'user', select: 'name',}).populate({path: 'book', select: 'title',}).exec((err, loan) => {
     if (err) res.status(500).send(err);
     res.status(200).json(loan);
   });

@@ -1,14 +1,17 @@
 const Book = require('../models/bookModel');
 
 exports.getAllBooks = (req, res) => {
-  Book.find({}, (err, books) => {
-    if (err) res.status(500).send(err);
-    res.status(200).json(books);
-  });
+  Book.find({})
+  .populate({path: 'category', select: 'name',}).populate({path: 'editorial', select: 'name',}).exec((err, books) => {
+      if (err) res.status(500).send(err);
+      res.status(200).json(books);
+    });
 };
 
+
 exports.getBookById = (req, res) => {
-  Book.findById(req.params.id, (err, book) => {
+  Book.findById(req.params.id)
+  .populate({path: 'category', select: 'name',}).populate({path: 'editorial', select: 'name',}).exec((err, book) => {
     if (err) res.status(500).send(err);
     res.status(200).json(book);
   });

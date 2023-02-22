@@ -1,8 +1,15 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+
+// Modules
 const user = require('./modules/user');
-const product = require('./modules/product');
+const book = require('./modules/book');
+const editorial = require('./modules/editorial');
+const loan = require('./modules/loan');
+const categ = require('./modules/categ')
+
+
 // const middleware = require('./middleware');
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -23,7 +30,10 @@ connectDB();
 
 // Routes
 app.use('/users', user.userRoutes);
-app.use('/products', product.productRoutes);
+app.use('/books', book.bookRoutes);
+app.use('/editorials', editorial.editorialRoutes);
+app.use('/loans', loan.loanRoutes);
+app.use('/categs', categ.categRoutes);
 
 // Start the server
 const port = process.env.PORT || 3000;
