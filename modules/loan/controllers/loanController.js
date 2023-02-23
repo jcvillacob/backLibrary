@@ -1,4 +1,5 @@
 const Loan = require('../models/loanModel');
+const Book = require('../../book/models/bookModel');
 
 exports.getAllLoans = (req, res) => {
     Loan.find({})
@@ -18,9 +19,26 @@ exports.getLoanById = (req, res) => {
 
 exports.createLoan = (req, res) => {
   const newLoan = new Loan(req.body);
-  newLoan.save((err, loan) => {
+  Book.findById(newLoan.book, (err, book) => {
     if (err) res.status(500).send(err);
-    res.status(201).json(loan);
+    if (!book.available) {
+      return res.status(400).json({ message: 'Book is not available' });
+    }
+    book.available = false;
+    newLoan.save((err, loan) => {
+      if (err) {
+        book.available = true;
+        return res.status(500).send(err);
+      }
+      book.loan = loan._id;
+      book.save((err, book) => {
+        if (err) {
+          book.available = true;
+          return res.status(500).send(err);
+        }
+        res.status(201).json({ message: 'Loan created successfully', loan });
+      });
+    });
   });
 };
 
