@@ -42,12 +42,59 @@ exports.createLoan = (req, res) => {
   });
 };
 
+
+
 exports.updateLoan = (req, res) => {
+  const loanId = req.params.id;
+  const { returned } = req.body;
+
+  Loan.findById(loanId)
+    .populate('book')
+    .exec((err, loan) => {
+      if (err) return res.status(500).send(err);
+
+      if (!loan) {
+        return res.status(404).send({ message: 'Loan not found' });
+      }
+
+      loan.returned = returned;
+
+      if (returned) {
+        // Si el préstamo se ha devuelto, actualizar el libro
+        Book.updateOne({ _id: loan.book._id }, { available: true, loan: null }, (err, result) => {
+          if (err) return res.status(500).send(err);
+
+          console.log(`Updated ${result.nModified} book`);
+
+          // Guardar la actualización del préstamo
+          loan.save((err, updatedLoan) => {
+            if (err) return res.status(500).send(err);
+            res.status(200).json(updatedLoan);
+          });
+        });
+      } else {
+        // Si el préstamo no se ha devuelto, solo guardar la actualización del préstamo
+        Book.updateOne({ _id: loan.book._id }, { available: false, loan: loan._id }, (err, result) => {
+          if (err) return res.status(500).send(err);
+
+          console.log(`Updated ${result.nModified} book`);
+        });
+        loan.save((err, updatedLoan) => {
+          if (err) return res.status(500).send(err);
+          res.status(200).json(updatedLoan);
+        });
+        };
+  });
+};
+
+
+
+/* exports.updateLoan = (req, res) => {
   Loan.findByIdAndUpdate(req.params.id, req.body, (err, loan) => {
     if (err) res.status(500).send(err);
     res.status(200).json(loan);
   });
-};
+}; */
 
 exports.deleteLoan = (req, res) => {
   Loan.findByIdAndDelete(req.params.id, (err) => {

@@ -12,4 +12,21 @@ const loanSchema = new mongoose.Schema({
   loanDate: {type: Date, default: Date.now}
 });
 
+/* loanSchema.pre('findOneAndUpdate', async function(next) {
+  const loan = await this.model.findOne(this.getQuery());
+  if (this.getUpdate().returned === true) {
+    const book = await this.model('Book').findByIdAndUpdate(
+      loan.book, 
+      { $set: { available: true, loan: null } }
+    );
+  } else if (this.getUpdate().returned === false) {
+    const book = await this.model('Book').findByIdAndUpdate(
+      loan.book, 
+      { $set: { available: false } }
+    );
+  }
+  next();
+}); */
+
+
 module.exports = mongoose.model('Loan', loanSchema);
