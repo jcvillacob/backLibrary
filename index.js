@@ -8,6 +8,7 @@ const book = require('./modules/book');
 const editorial = require('./modules/editorial');
 const loan = require('./modules/loan');
 const categ = require('./modules/categ')
+const review = require('./modules/review')
 
 
 // const middleware = require('./middleware');
@@ -34,6 +35,7 @@ app.use('/books', book.bookRoutes);
 app.use('/editorials', editorial.editorialRoutes);
 app.use('/loans', loan.loanRoutes);
 app.use('/categs', categ.categRoutes);
+app.use('/reviews', review.reviewRoutes);
 
 // Start the server
 const port = process.env.PORT || 3000;
