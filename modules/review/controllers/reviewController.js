@@ -2,7 +2,11 @@ const Review = require('../models/reviewModel');
 const Book = require('../../book/models/bookModel');
 
 exports.getAllReviews = (req, res) => {
-    Review.find({book: { $regex: new RegExp(req.query.book, 'i') }})
+  const filters = {};
+  if (req.query.book) {
+    filters.book = { $regex: new RegExp(req.query.book, 'i') };
+  }
+  Review.find(filters)
     .populate({path: 'user', select: 'name',}).exec((err, reviews) => {
     if (err) res.status(500).send(err);
     res.status(200).json(reviews);

@@ -1,7 +1,32 @@
 const Book = require('../models/bookModel');
 
 exports.getAllBooks = (req, res) => {
-  Book.find({})
+  const filters = {};
+  if (req.query.title) {
+    filters.title = req.query.title;
+  }
+  if (req.query.author) {
+    filters.author = req.query.author;
+  }
+  if (req.query.publisher) {
+    filters.publisher = req.query.publisher;
+  }
+  if (req.query.publicationYear) {
+    filters.publicationYear = req.query.publicationYear;
+  }
+  if (req.query.ISBN) {
+    filters.ISBN = req.query.ISBN;
+  }
+  if (req.query.category) {
+    filters.category = req.query.category;
+  }
+  if (req.query.editorial) {
+    filters.editorial = req.query.editorial;
+  }
+  if (req.query.available) {
+    filters.available = req.query.available;
+  }
+  Book.find(filters)
   .populate({path: 'category', select: 'name',}).populate({path: 'editorial', select: 'name',})
   .populate({path: 'loan', select: 'returnDate'}).exec((err, books) => {
       if (err) res.status(500).send(err);
