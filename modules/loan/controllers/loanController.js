@@ -2,9 +2,11 @@ const Loan = require('../models/loanModel');
 const Book = require('../../book/models/bookModel');
 const User = require('../../user/models/userModel');
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const template = fs.readFileSync('modules/loan/controllers/email.html', 'utf8');
 
 exports.getAllLoans = (req, res) => {
-    Loan.find({})
+    Loan.find({returned: req.query.returned})
     .populate({path: 'user', select: 'name',}).populate({path: 'book', select: 'title',}).exec((err, loans) => {
     if (err) res.status(500).send(err);
     res.status(200).json(loans);
@@ -40,6 +42,8 @@ exports.createLoan = (req, res) => {
         }
         User.findById(newLoan.user, (err, user) => {
           if (err) res.status(500).send(err);
+
+          
           // Enviar notificación por email al usuario
           const transporter = nodemailer.createTransport({
             service: 'Gmail',
@@ -51,13 +55,13 @@ exports.createLoan = (req, res) => {
 
           const options = { day: 'numeric', month: 'long', year: 'numeric' };
           const formattedDate = loan.returnDate.toLocaleDateString('es-ES', options);
+          const html = template.replace('{{userName}}', user.name).replace('{{bookTitle}}', book.title).replace('{{returnDate}}', formattedDate);
 
           const mailOptions = {
             from: 'Biblioteca <jucaviza6@gmail.com>', // Cambiar por tu correo
             to: user.email, // El correo del usuario que hizo el préstamo
             subject: 'Confirmación de préstamo',
-            text: `Hola ${user.name}, has hecho un préstamo de "${book.title}" por 14 días. 
-            Fecha de devolución: ${formattedDate}. Gracias por utilizar nuestra biblioteca.`
+            html: html
           };
 
           // Enviar correo electrónico al usuario
