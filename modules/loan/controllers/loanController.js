@@ -47,36 +47,43 @@ exports.createLoan = (req, res) => {
         User.findById(newLoan.user, (err, user) => {
           if (err) res.status(500).send(err);
 
-          const template = fs.readFileSync('modules/loan/controllers/email.html', 'utf8');
-          // Enviar notificación por email al usuario
-          const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-              user: 'jucaviza6@gmail.com', // Cambiar por tu correo
-              pass: 'qxqqnwychkajbfzs' // Cambiar por tu contraseña
-            }
+          Loan.find({user : newLoan.user, returned: false}, (err, loans) => {
+            const count = loans.length;
+            if (count >= 2){
+              return res.status(400).json({ message: `the user already has 2 loans` })
+            } else {
+              const template = fs.readFileSync('modules/loan/controllers/email.html', 'utf8');
+              // Enviar notificación por email al usuario
+              const transporter = nodemailer.createTransport({
+                service: 'Gmail',
+                auth: {
+                  user: 'jucaviza6@gmail.com', // Cambiar por tu correo
+                  pass: 'qxqqnwychkajbfzs' // Cambiar por tu contraseña
+                }
+              });
+    
+              const options = { day: 'numeric', month: 'long', year: 'numeric' };
+              const formattedDate = loan.returnDate.toLocaleDateString('es-ES', options);
+              const html = template.replace('{{userName}}', user.name).replace('{{bookTitle}}', book.title)
+              .replace('{{returnDate}}', formattedDate).replace('{{bookUrl}}', book.coverImage);
+    
+              const mailOptions = {
+                from: 'Biblioteca <jucaviza6@gmail.com>', // Cambiar por tu correo
+                to: user.email, // El correo del usuario que hizo el préstamo
+                subject: 'Confirmación de préstamo',
+                html: html
+              };
+    
+              // Enviar correo electrónico al usuario
+              transporter.sendMail(mailOptions, (error, info) => {
+                if (error) console.log(error);
+                else console.log('Email enviado: ' + info.response);
+              });
+    
+              // Responder con un mensaje de éxito
+              res.status(201).json({ message: 'Loan created successfully', loan });
+            };
           });
-
-          const options = { day: 'numeric', month: 'long', year: 'numeric' };
-          const formattedDate = loan.returnDate.toLocaleDateString('es-ES', options);
-          const html = template.replace('{{userName}}', user.name).replace('{{bookTitle}}', book.title)
-          .replace('{{returnDate}}', formattedDate).replace('{{bookUrl}}', book.coverImage);
-
-          const mailOptions = {
-            from: 'Biblioteca <jucaviza6@gmail.com>', // Cambiar por tu correo
-            to: user.email, // El correo del usuario que hizo el préstamo
-            subject: 'Confirmación de préstamo',
-            html: html
-          };
-
-          // Enviar correo electrónico al usuario
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) console.log(error);
-            else console.log('Email enviado: ' + info.response);
-          });
-
-          // Responder con un mensaje de éxito
-          res.status(201).json({ message: 'Loan created successfully', loan });
         });
       });
     });
