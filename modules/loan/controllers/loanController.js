@@ -1,5 +1,7 @@
 const Loan = require('../models/loanModel');
 const Book = require('../../book/models/bookModel');
+const User = require('../../user/models/userModel');
+const nodemailer = require('nodemailer');
 
 exports.getAllLoans = (req, res) => {
     Loan.find({})
@@ -36,11 +38,42 @@ exports.createLoan = (req, res) => {
           book.available = true;
           return res.status(500).send(err);
         }
-        res.status(201).json({ message: 'Loan created successfully', loan });
+        User.findById(newLoan.user, (err, user) => {
+          if (err) res.status(500).send(err);
+          // Enviar notificación por email al usuario
+          const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+              user: 'jucaviza6@gmail.com', // Cambiar por tu correo
+              pass: 'qxqqnwychkajbfzs' // Cambiar por tu contraseña
+            }
+          });
+
+          const options = { day: 'numeric', month: 'long', year: 'numeric' };
+          const formattedDate = loan.returnDate.toLocaleDateString('es-ES', options);
+
+          const mailOptions = {
+            from: 'Biblioteca <jucaviza6@gmail.com>', // Cambiar por tu correo
+            to: user.email, // El correo del usuario que hizo el préstamo
+            subject: 'Confirmación de préstamo',
+            text: `Hola ${user.name}, has hecho un préstamo de "${book.title}" por 14 días. 
+            Fecha de devolución: ${formattedDate}. Gracias por utilizar nuestra biblioteca.`
+          };
+
+          // Enviar correo electrónico al usuario
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) console.log(error);
+            else console.log('Email enviado: ' + info.response);
+          });
+
+          // Responder con un mensaje de éxito
+          res.status(201).json({ message: 'Loan created successfully', loan });
+        });
       });
     });
   });
 };
+
 
 
 
