@@ -164,8 +164,6 @@ exports.updateLoan = (req, res) => {
   });
 };
 
-
-
 /* exports.updateLoan = (req, res) => {
   Loan.findByIdAndUpdate(req.params.id, req.body, (err, loan) => {
     if (err) res.status(500).send(err);
