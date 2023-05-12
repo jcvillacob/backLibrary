@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Verificación de cuenta</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-verify {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: white;
+            background-color: #4caf50;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Bienvenido a la biblioteca Lindenbrok, {{userName}}</h2>
+        <p>
+            Gracias por registrarte en nuestra página web. Para confirmar tu correo
+            electrónico y activar tu cuenta, por favor haz clic en el botón de
+            abajo.
+        </p>
+        <a href="http://localhost:4000/verify?t={{token}}" class="btn-verify">Verificar Cuenta</a>
+        <p>
+            Si tienes problemas para hacer clic en el botón "Verificar Cuenta",
+            copia y pega la URL de abajo en tu navegador web:
+        </p>
+        <p>http://localhost:4000/verify?t={{token}}</p>
+        <p>¡Gracias!</p>
+        <p>El equipo de la biblioteca Lindenbrok</p>
+    </div>
+</body>
+
+</html>

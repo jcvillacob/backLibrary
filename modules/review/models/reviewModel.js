@@ -9,7 +9,7 @@ const reviewSchema = new mongoose.Schema({
     },
     message: props => `${props.value} is not a valid rating. Rating must be between 0 and 10.`
     }},
-  comment: {type: String}
+  comment: {type: String, required: true}
 });
 
 module.exports = mongoose.model('Review', reviewSchema);

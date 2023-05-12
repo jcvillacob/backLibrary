@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
 require('dotenv').config({path : 'variables.env'});
+const mongoose = require('mongoose');
 mongoose.set('strictQuery', true);
 
 const connectDB = () => {
