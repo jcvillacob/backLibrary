@@ -7,7 +7,7 @@ const auth = require('../../../middleware/auth');
 router.post('/', userController.createUser);
 
 // Ruta para verificar a los usuarios recien creados
-router.put('/verified', userController.verifyUser);
+router.get('/verified', userController.verifyUser);
 
 // Rutas para que los usuarios de rol "commenter" puedan ver y editar su propio usuario
 router.get('/me', auth.auth, userController.getSelf);

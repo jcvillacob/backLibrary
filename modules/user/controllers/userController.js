@@ -61,7 +61,7 @@ exports.createUser = async (req, res) => {
       },
     });
 
-    const html = template.replace('{{userName}}', user.name).replace('{{token}}', token);
+    const html = template.replace(/{{userName}}/g, user.name).replace(/{{token}}/g, token);
 
     const mailOptions = {
       from: 'Biblioteca <jucaviza6@gmail.com>', // Cambiar por tu correo
