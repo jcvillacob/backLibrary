@@ -8,15 +8,21 @@ exports.login = (req, res, next) => {
     .then(user => {
       if (!user) {
         return res.status(401).json({
-          message: 'Authentication failed'
+          message: 'Usuario no Encontrado'
+        });
+      }
+      if (user.rol !== 'Admin' && !user.verified) { // Verificar si el usuario está verificado, a menos que sea un Admin
+        return res.status(401).json({
+          message: 'Usuario no verificado'
         });
       }
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
           return res.status(401).json({
-            message: 'Authentication failed'
+            message: 'Error al iniciar sesión'
           });
-        }
+        };
+        console.log('Result:', result);
         if (result) {
           const token = jwt.sign(
             {

@@ -17,6 +17,18 @@ exports.getAllLoans = (req, res) => {
   });
 };
 
+/// OBTENER USUARIO PROPIO ///////////////
+exports.getSelf = async (req, res) => {
+  const userId = req.userData.userId;
+  const filters = { user: userId};
+  try {
+    const loans = await Loan.find(filters).populate({path: 'book', select: 'title',});
+    res.status(200).json(loans);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
 exports.getLoanById = (req, res) => {
   Loan.findById(req.params.id)
   .populate({path: 'user', select: 'name',}).populate({path: 'book', select: 'title',}).exec((err, loan) => {

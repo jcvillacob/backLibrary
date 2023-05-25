@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
 
-/////////////////////////////////////////////////////////////
+/// OBTENER TODOS LOS USUARIOS ///////////////
 exports.getAllUsers = async (req, res) => {
   try {
     let filter = {};
@@ -19,7 +19,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// OBTENER UN SOLO USUARIOS ///////////////
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -30,7 +30,7 @@ exports.getUserById = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// OBTENER USUARIO PROPIO ///////////////
 exports.getSelf = async (req, res) => {
   try {
     const user = await User.findById(req.userData.userId);
@@ -41,7 +41,7 @@ exports.getSelf = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// CREAR UN NUEVO USUARIOS ///////////////
 exports.createUser = async (req, res) => {
   const newUser = new User(req.body);
   try {
@@ -82,8 +82,8 @@ exports.createUser = async (req, res) => {
   }
 };
 
-/////////////////////////////////////////////////////////////
-// Ruta para verificar el token y actualizar el campo "verified"
+
+/// VERIFICAR USUARIO ///////////////
 exports.verifyUser = async (req, res) => {
   const token = req.query.t;
 
@@ -105,7 +105,7 @@ exports.verifyUser = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// ACTUALIZAR USUARIO ///////////////
 exports.updateUser = async (req, res) => {
   try {
     if (req.body.password) {
@@ -122,7 +122,7 @@ exports.updateUser = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// ACTUALIZAR USUARIO PROPIO ///////////////
 exports.updateSelf = async (req, res) => {
   try {
     if (req.body.password) {
@@ -138,11 +138,48 @@ exports.updateSelf = async (req, res) => {
 };
 
 
-/////////////////////////////////////////////////////////////
+/// ELIMINAR USUARIO ///////////////
 exports.deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.status(204).send();
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
+
+/// AÑADIR LIBRO A LISTA DE ME GUSTA ///////////////
+exports.addLike = async (req, res) => {
+  const id = req.userData.userId;
+  const { bookId } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user.likes.includes(bookId)) {
+      user.likes.push(bookId);
+      await user.save();
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
+
+/// ELIMINAR LIBRO DE LISTA DE ME GUSTA ///////////////
+exports.removeLike = async (req, res) => {
+  const id = req.userData.userId;
+  const { bookId } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    const index = user.likes.indexOf(bookId);
+    if (index > -1) {
+      user.likes.splice(index, 1);
+      await user.save();
+    }
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).send(err);
   }

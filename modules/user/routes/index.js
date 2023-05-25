@@ -16,7 +16,11 @@ router.put('/me', auth.auth, userController.updateSelf);
 // Rutas para que los usuarios de rol "admin" puedan ver, editar y eliminar a todos los usuarios
 router.get('/', userController.getAllUsers);
 router.get('/:id', auth.admin, userController.getUserById);
-router.put('/:id', auth.admin, userController.updateUser);
+router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+
+// Rutas para modificar la lista de me gusta
+router.get('/likes/:bookId', auth.auth, userController.addLike);
+router.delete('/likes/:bookId', auth.auth, userController.removeLike);
 
 module.exports = router;
